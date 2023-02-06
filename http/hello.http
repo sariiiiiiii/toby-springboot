@@ -1,0 +1,11 @@
+### helloController
+GET http://localhost:8080/hello?name=sari
+Content-Type: application/json
+
+### serlvet container test
+POST http://localhost:8080/sari?name=sari
+Content-Type: application/json
+
+### front contoller에서 controller로 로직 위임
+POST http://localhost:8080/user?user=sari
+Content-Type: application/json
