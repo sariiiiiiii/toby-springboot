@@ -1,4 +1,4 @@
-package toby.spring.helloboot;
+package toby.spring.helloboot._00_practice;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServer;
@@ -37,6 +37,7 @@ public class HellobootApplication {
 
 		GenericApplicationContext applicationContext = new GenericApplicationContext();
 		applicationContext.registerBean(HelloFrontController.class); // spring container가 어떤 클래스로 Bean을 만들것인가
+		applicationContext.registerBean(SimpleHelloService.class); // service를 Bean으로 등록할 때 HelloService 처럼 인터페이스를 등록하는것이 아니라 특정 클래스를 등록
 		applicationContext.refresh(); // 처음 자기가 가지고 있는 구성정보(spring container)를 초기화 작업, application context가 빈 오브젝트를 만들어줌
 
 
@@ -81,7 +82,9 @@ public class HellobootApplication {
 			 * 실질적인 웹 애플리케이션 로직을 담담하는 부분은 다른 오브젝트한테 위임을 해야됨 (원래 프론트 컨트롤러가 그렇게 진행됨)
 			 * 프론트컨트롤러에서 로직을 위임해보자
 			 */
-			HelloFrontController helloFrontController = new HelloFrontController();
+			HelloService helloService = new SimpleHelloService();
+			HelloFrontController helloFrontController = new HelloFrontController(helloService);
+
 
 			servletContext.addServlet("front-controller", new HttpServlet() {
 				@Override
@@ -115,7 +118,7 @@ public class HellobootApplication {
 			servletContext.addServlet("spring-container", new HttpServlet() {
 				@Override
 				protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-					if (req.getRequestURI().equals("container")) {
+					if (req.getRequestURI().equals("/container")) {
 						String name = req.getParameter("container");
 
 						// 모든 Bean에는 이름이나 클래스 타입을 사용할 수 있음
@@ -126,7 +129,7 @@ public class HellobootApplication {
 						resp.getWriter().println("container " + ret);
 					}
 				};
-			}).addMapping("/*");
+			}).addMapping("/container");
 
 		});
 
